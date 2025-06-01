@@ -62,8 +62,10 @@ int ps_muxer_input(struct ps_muxer_t* ps, int streamid, int flags, int64_t pts, 
     stream->dts = dts;
 
 	// Add PSM for IDR frame
-	ps->psm_period = ((flags & MPEG_FLAG_IDR_FRAME) && mpeg_stream_type_video(stream->codecid)) ? 0 : ps->psm_period;
-    ps->h26x_with_aud = (flags & MPEG_FLAG_H264_H265_WITH_AUD) ? 1 : 0;
+	//ps->psm_period = ((flags & MPEG_FLAG_IDR_FRAME) && mpeg_stream_type_video(stream->codecid)) ? 0 : ps->psm_period;
+    	// 兼容GB28181（音频不加 SYS HEADER | PSM HEADER头）
+	ps->psm_period = ((flags & MPEG_FLAG_IDR_FRAME) && mpeg_stream_type_video(stream->codecid)) ? 0 : 1;
+	ps->h26x_with_aud = (flags & MPEG_FLAG_H264_H265_WITH_AUD) ? 1 : 0;
 
 	// TODO: 
 	// 1. update packet header program_mux_rate
